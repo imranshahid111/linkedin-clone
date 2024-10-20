@@ -60,21 +60,36 @@ function Filepost(props, ref) {
 
   
 
-    const addPost = async () => {
-        const postDocument = doc(database,"Users", `${auth.currentUser?.uid}`)
-        const postRef = doc(postDocument, "Posts",`${Math.random()}`)
-        try {
-            await setDoc(postRef,{
-              username:userData._document?.data?.value.mapValue.fields.username.stringValue,
-              designation:userData._document?.data?.value.mapValue.fields.designation.stringValue,
-              profile_image:userData._document?.data?.value.mapValue.fields.profile_image.stringValue,
-              filePost:file
-            })
-            setFile([])
-        } catch (err) {
-            console.error(err)
+      const addPost = async () => {
+        const postDocument = doc(database, "Users", `${auth.currentUser?.uid}`);
+        const postRef = doc(postDocument, "Posts", `${Math.random()}`);
+    
+        // Safely extract user data with fallback values
+        const username = userData?._document?.data?.value.mapValue.fields.username?.stringValue || "Unknown User";
+        const designation = userData?._document?.data?.value.mapValue.fields.designation?.stringValue || "No Designation";
+        const profile_image = userData?._document?.data?.value.mapValue.fields.profile_image?.stringValue || "default_image_url"; // Use a default image URL if necessary
+    
+        const filePost = file || null;
+    
+        // Check if username is still undefined
+        if (!username) {
+            console.error("Username is undefined, cannot add post.");
+            return; // Exit if username is not available
         }
-    }
+    
+        try {
+            await setDoc(postRef, {
+                username,
+                designation,
+                profile_image,
+                filePost
+            });
+            setFile([]); // Clear the file after posting
+        } catch (err) {
+            console.error("Error adding post:", err);
+        }
+    };
+    
 
 
 

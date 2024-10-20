@@ -50,21 +50,27 @@ function Post(props, ref) {
       useEffect(()=>{
        getUser()
       },[])
-
-    const addPost = async () => {
-        const postDocument = doc(database,"Users", `${auth.currentUser?.uid}`)
-        const postRef = doc(postDocument, "Posts",`${Math.random()}`)
+      const addPost = async () => {
+        const postDocument = doc(database, "Users", `${auth.currentUser?.uid}`);
+        const postRef = doc(postDocument, "Posts", `${Math.random()}`);
+    
+        // Extract data safely with default values
+        const username = userData?._document?.data?.value.mapValue.fields.username.stringValue || "";
+        const designation = userData?._document?.data?.value.mapValue.fields.designation.stringValue || "";
+        const profile_image = userData?._document?.data?.value.mapValue.fields.profile_image.stringValue || "";
+    
         try {
-            await setDoc(postRef,{
-                textPost:text,
-                username:userData._document?.data?.value.mapValue.fields.username.stringValue,
-                designation:userData._document?.data?.value.mapValue.fields.designation.stringValue,
-                profile_image:userData._document?.data?.value.mapValue.fields.profile_image.stringValue
-            })
+            await setDoc(postRef, {
+                textPost: text,
+                username: username,
+                designation: designation,
+                profile_image: profile_image
+            });
         } catch (err) {
-            console.error(err)
+            console.error(err);
         }
-    }
+    };
+    
 
 
     return (
